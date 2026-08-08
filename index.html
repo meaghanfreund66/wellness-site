@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellness Meal Planner</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header>
+      <h1>Wellness Meal Planner</h1>
+      <p>Set a nutrition plan, log what you actually eat, and track calories + protein throughout the day.</p>
+    </header>
+
+    <section class="panel plan-panel">
+      <h2>Daily Plan</h2>
+      <div class="field-grid">
+        <div>
+          <label for="breakfastCalories">Breakfast calories</label>
+          <input type="number" id="breakfastCalories" min="0" value="0" />
+        </div>
+        <div>
+          <label for="breakfastProtein">Breakfast protein (g)</label>
+          <input type="number" id="breakfastProtein" min="0" value="0" />
+        </div>
+        <div>
+          <label for="lunchCalories">Lunch calories</label>
+          <input type="number" id="lunchCalories" min="0" value="0" />
+        </div>
+        <div>
+          <label for="lunchProtein">Lunch protein (g)</label>
+          <input type="number" id="lunchProtein" min="0" value="0" />
+        </div>
+        <div>
+          <label for="dinnerCalories">Dinner calories</label>
+          <input type="number" id="dinnerCalories" min="0" value="0" />
+        </div>
+        <div>
+          <label for="dinnerProtein">Dinner protein (g)</label>
+          <input type="number" id="dinnerProtein" min="0" value="0" />
+        </div>
+        </div>
+      <div class="planned-snacks-panel">
+        <h3>Planned snacks</h3>
+        <div class="field-grid small-grid">
+          <div>
+            <label for="plannedSnackName">Snack name</label>
+            <input type="text" id="plannedSnackName" placeholder="e.g. Yogurt" />
+          </div>
+          <div>
+            <label for="plannedSnackCalories">Calories</label>
+            <input type="number" id="plannedSnackCalories" min="0" value="0" />
+          </div>
+          <div>
+            <label for="plannedSnackProtein">Protein (g)</label>
+            <input type="number" id="plannedSnackProtein" min="0" value="0" />
+          </div>
+        </div>
+        <button id="addPlannedSnackButton" class="btn btn-secondary">Add Snack to Plan</button>
+        <ul id="plannedSnackList" class="log-list" style="margin-top:8px;"></ul>
+      </div>
+      <button id="savePlanButton" class="btn btn-primary">Save Plan</button>
+      <div class="totals-row">
+        <div class="card">
+          <span class="card-label">Planned calories</span>
+          <strong id="plannedCalories">0</strong>
+        </div>
+        <div class="card">
+          <span class="card-label">Planned protein</span>
+          <strong id="plannedProtein">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel actual-panel">
+      <h2>Actual Intake</h2>
+      <div class="field-grid small-grid">
+        <div>
+          <label for="foodName">Food / Snack</label>
+          <input type="text" id="foodName" placeholder="e.g. Protein bar" />
+        </div>
+        <div>
+          <label for="foodCalories">Calories</label>
+          <input type="number" id="foodCalories" min="0" value="0" />
+        </div>
+        <div>
+          <label for="foodProtein">Protein (g)</label>
+          <input type="number" id="foodProtein" min="0" value="0" />
+        </div>
+      </div>
+      <button id="addFoodButton" class="btn btn-secondary">Add to Day</button>
+      <div class="totals-row">
+        <div class="card">
+          <span class="card-label">Actual calories</span>
+          <strong id="actualCalories">0</strong>
+        </div>
+        <div class="card">
+          <span class="card-label">Actual protein</span>
+          <strong id="actualProtein">0</strong>
+        </div>
+      </div>
+      <div class="log-panel">
+        <h3>Today’s log</h3>
+        <ul id="foodLog" class="log-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
