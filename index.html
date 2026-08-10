@@ -5,6 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wellness Meal Planner</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Day selector circles */
+    .day-selector .day {
+      display: inline-block;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 44px;
+      margin: 4px;
+      cursor: pointer;
+      border: 1px solid #444;
+      user-select: none;
+      font-weight: 600;
+      background: #fff;
+      color: #222;
+    }
+    .day-selector .day.day-selected {
+      background: #333;
+      color: #fff;
+      border-color: #333;
+    }
+    @media (max-width: 420px) {
+      .day-selector .day { width:36px; height:36px; line-height:36px; }
+    }
+  </style>
 </head>
 <body>
   <main class="app-shell">
@@ -12,6 +38,11 @@
       <h1>Wellness Meal Planner</h1>
       <p>Set a nutrition plan, log what you actually eat, and track calories + protein throughout the day.</p>
     </header>
+
+    <!-- Day selector: Monday - Sunday -->
+    <div id="daySelector" class="day-selector" style="text-align:center; margin:12px 0;">
+      <!-- buttons injected by script.js -->
+    </div>
 
     <section class="panel plan-panel">
       <h2>Daily Plan</h2>

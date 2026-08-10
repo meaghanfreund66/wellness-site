@@ -1,3 +1,6 @@
+// constants
+
+// meal planner consts
 const planInputs = {
   breakfastCalories: document.getElementById('breakfastCalories'),
   breakfastProtein: document.getElementById('breakfastProtein'),
@@ -23,7 +26,14 @@ const plannedSnackProteinInput = document.getElementById('plannedSnackProtein');
 const addPlannedSnackButton = document.getElementById('addPlannedSnackButton');
 const plannedSnackList = document.getElementById('plannedSnackList');
 
+
+// save days of the week (without DB for now)
 const STORAGE_KEY = 'wellnessMealPlanner';
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const daySelector = document.getElementById('daySelector');
+let currentDay = null;
+
 const initialState = {
   plan: {
     breakfastCalories: 0,
@@ -34,18 +44,100 @@ const initialState = {
     dinnerProtein: 0,
     plannedSnacks: []
   },
-
   actualItems: [],
 };
 
-function loadState() {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : initialState;
+// Ensure there's a global storage object with an entry for each weekday
+function ensureGlobalData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  let data;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      // migrate older single-day shape (top-level plan/actualItems) into new days map
+      if (parsed && !parsed.days && (parsed.plan || parsed.actualItems)) {
+        const idx = new Date().getDay();
+        const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][idx];
+        data = { days: {}, selectedDay: DAYS.includes(dayName) ? dayName : 'Monday' };
+        // place old data into today's slot
+        data.days[data.selectedDay] = parsed;
+      } else {
+        data = parsed;
+      }
+    } catch (e) {
+      data = { days: {}, selectedDay: null };
+    }
+  } else {
+    data = { days: {}, selectedDay: null };
+  }
+
+  DAYS.forEach((d) => {
+    if (!data.days[d]) {
+      // deep copy of initialState
+      data.days[d] = JSON.parse(JSON.stringify(initialState));
+    }
+  });
+  if (!data.selectedDay) {
+    // default to today's weekday (map 0=Sun..6=Sat -> name)
+    const idx = new Date().getDay();
+    const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][idx];
+    data.selectedDay = DAYS.includes(dayName) ? dayName : 'Monday';
+  }
+  return data;
 }
 
-function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+// Load the state for the currently selected day
+function loadState() {
+  const data = ensureGlobalData();
+  if (!currentDay) currentDay = data.selectedDay;
+  return data.days[currentDay];
 }
+
+// Save the provided day-state into the global store under the currently selected day
+function saveState(state) {
+  const data = ensureGlobalData();
+  data.days[currentDay] = state;
+  data.selectedDay = currentDay;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// Set the active day and re-render
+function setCurrentDay(dayName) {
+  currentDay = dayName;
+  const data = ensureGlobalData();
+  data.selectedDay = dayName;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  updateDaySelectorUI();
+  render(loadState());
+}
+
+function updateDaySelectorUI() {
+  if (!daySelector) return;
+  daySelector.querySelectorAll('.day').forEach(el => {
+    el.classList.toggle('day-selected', el.getAttribute('data-day') === currentDay);
+  });
+}
+
+// Render day selector buttons
+function renderDaySelector() {
+  if (!daySelector) return;
+  daySelector.innerHTML = '';
+  DAYS.forEach((d, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'day';
+    btn.setAttribute('data-day', d);
+    btn.setAttribute('title', d);
+    btn.textContent = DAY_LABELS[i];
+    btn.addEventListener('click', () => setCurrentDay(d));
+    daySelector.appendChild(btn);
+  });
+}
+
+// Initialize selector and currentDay on load
+renderDaySelector();
+const stored = ensureGlobalData();
+currentDay = stored.selectedDay || currentDay || 'Monday';
+updateDaySelectorUI();
 
 function calculatePlanTotals(plan) {
   const snackTotals = (plan.plannedSnacks || []).reduce((acc, s) => {
